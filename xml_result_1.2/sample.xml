@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mutations>
+    <mutation detected='true' status='TIMED_OUT' numberOfTestsRun='0'>
+        <sourceFile>ArgUtils.java</sourceFile>
+        <mutatedClass>org.apache.commons.math3.exception.util.ArgUtils</mutatedClass>
+        <mutatedMethod>flatten</mutatedMethod>
+        <methodDescription>([Ljava/lang/Object;)[Ljava/lang/Object;</methodDescription>
+        <lineNumber>44</lineNumber>
+        <mutator>org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator</mutator>
+        <index>77</index>
+        <block>6</block>
+        <killingTests />
+        <suspValue>0.04299335803923478</suspValue>
+        <description>Removed increment 1</description>
+        <testsExecutionTime></testsExecutionTime>
+        <patchExecutionTime>0ms</patchExecutionTime>
+    </mutation>
+</mutations>

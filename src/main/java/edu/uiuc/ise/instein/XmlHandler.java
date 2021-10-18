@@ -13,6 +13,8 @@ public class XmlHandler extends DefaultHandler {
     private Mutant mutant;
     private StringBuilder elementValue;
 
+    // for test execution time
+    private String testName;
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
@@ -29,6 +31,9 @@ public class XmlHandler extends DefaultHandler {
         switch (qName){
             case "mutation":
                 mutant = new Mutant();
+                mutant.setDetected(Boolean.parseBoolean(attributes.getValue("detected")));
+                mutant.setStatus(attributes.getValue("status"));
+                mutant.setNumberOfTestsRun(Integer.parseInt(attributes.getValue("numberOfTestsRun")));
                 break;
             case "testsExecutionTime":
                 mutant.setTestsExecutionTime(new HashMap<>());
@@ -78,18 +83,22 @@ public class XmlHandler extends DefaultHandler {
             case "description":
                 mutant.setDescription(elementValue.toString());
                 break;
-            case "testsExecutionTime":
-                System.out.println("testsExecutionTime ends");
-                break;
+//            case "testsExecutionTime":
+//                System.out.println("testsExecutionTime ends");
+//                break;
             case "patchExecutionTime":
                 elementValue.setLength(elementValue.length() - 2);
                 mutant.setPatchExecutionTime(Integer.parseInt(elementValue.toString()));
                 break;
             // for test execution time
-//            case "name":
-//                break;
-//            case "time":
-//                break;
+            case "name":
+                testName = elementValue.toString();
+                break;
+            case "time":
+                elementValue.setLength(elementValue.length() - 2);
+                mutant.getTestsExecutionTime().put(testName, Integer.parseInt(elementValue.toString()));
+                testName = null;
+                break;
         }
     }
 

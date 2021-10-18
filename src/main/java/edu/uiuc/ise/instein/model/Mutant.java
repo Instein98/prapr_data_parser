@@ -8,8 +8,8 @@ import java.util.Map;
 @Data
 public class Mutant {
     boolean detected;
-    // Enum
-    DetectionStatus status;
+    String status;
+    int numberOfTestsRun;
     int getWebsite;
     String sourceFile;
     String mutatedClass;

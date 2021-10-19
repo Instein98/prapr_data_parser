@@ -15,6 +15,7 @@ public class XmlHandler extends DefaultHandler {
 
     // for test execution time
     private String testName;
+    private int testExecutionTimeSum;
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
@@ -83,9 +84,10 @@ public class XmlHandler extends DefaultHandler {
             case "description":
                 mutant.setDescription(elementValue.toString());
                 break;
-//            case "testsExecutionTime":
-//                System.out.println("testsExecutionTime ends");
-//                break;
+            case "testsExecutionTime":
+                mutant.setTestExecutionTimeSum(testExecutionTimeSum);
+                testExecutionTimeSum = 0;
+                break;
             case "patchExecutionTime":
                 elementValue.setLength(elementValue.length() - 2);
                 mutant.setPatchExecutionTime(Integer.parseInt(elementValue.toString()));
@@ -96,7 +98,9 @@ public class XmlHandler extends DefaultHandler {
                 break;
             case "time":
                 elementValue.setLength(elementValue.length() - 2);
-                mutant.getTestsExecutionTime().put(testName, Integer.parseInt(elementValue.toString()));
+                int timeCost = Integer.parseInt(elementValue.toString());
+                testExecutionTimeSum += timeCost;
+                mutant.getTestsExecutionTime().put(testName, timeCost);
                 testName = null;
                 break;
         }

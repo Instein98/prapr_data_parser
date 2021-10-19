@@ -2,7 +2,6 @@ package edu.uiuc.ise.instein.model;
 
 import lombok.Data;
 
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -23,5 +22,6 @@ public class Mutant {
     double suspValue;
     String description;
     Map<String, Integer> testsExecutionTime;
+    int testExecutionTimeSum;
     int patchExecutionTime;
 }

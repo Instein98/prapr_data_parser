@@ -6,10 +6,7 @@ import edu.uiuc.ise.instein.model.Mutants;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Collect the data for each buggy subject:
@@ -23,10 +20,6 @@ public class Main {
         SAXParser saxParser = factory.newSAXParser();
         XmlHandler handler = new XmlHandler();
 
-//        saxParser.parse("xml_result_1.2/Chart/2.xml", handler);
-//
-//        Mutants result = handler.getResult();
-
         File resultDir = new File("xml_result_1.2");
         for (File subjectDir: resultDir.listFiles()){
             if (subjectDir.isDirectory()){
@@ -34,9 +27,14 @@ public class Main {
                     if (!xmlFile.getName().endsWith(".xml")){
                         continue;
                     }
-                    saxParser.parse(xmlFile.getAbsolutePath(), handler);
-                    Mutants result = handler.getResult();
                     String id = subjectDir.getName() + xmlFile.getName().substring(0, xmlFile.getName().length()-4);
+                    try{
+                        saxParser.parse(xmlFile.getAbsolutePath(), handler);
+                    } catch (Throwable t){
+                        System.out.println(id + " parse failed: " + t.getMessage());
+                        continue;
+                    }
+                    Mutants result = handler.getResult();
                     printResult(result, id);
                 }
             }

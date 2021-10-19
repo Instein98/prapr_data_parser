@@ -43,30 +43,58 @@ public class Main {
 
     public static void printResult(Mutants mutants, String identifier){
         List<Mutant> mutantList = mutants.getMutantList();
-        // testing time including the timeout cost
-        int totalTestTime = mutantList.stream()
-                .map(x -> x.getStatus().equals("TIMED_OUT") ? x.getTestExecutionTimeSum() + 3000 : x.getTestExecutionTimeSum())
-                .mapToInt(i -> i)
+
+        int totalTestTimeWithTimeOut = mutantList.stream()
+                .mapToInt(x -> x.getStatus().equals("TIMED_OUT") ? x.getTestExecutionTimeSum() + 3000 : x.getTestExecutionTimeSum())
                 .sum();
+
+        int totalTestTimeWithoutTimeOut = mutantList.stream()
+                .mapToInt(Mutant::getTestExecutionTimeSum)
+                .sum();
+
+        int totalPatchExecutionTimeWithTimeOut = mutantList.stream()
+                .mapToInt(x -> x.getStatus().equals("TIMED_OUT") ? x.getPatchExecutionTime() + 3000 : x.getPatchExecutionTime())
+                .sum();
+
+        int totalPatchExecutionTimeWithoutTimeOut = mutantList.stream()
+                .mapToInt(Mutant::getPatchExecutionTime)
+                .sum();
+
+        int totalTimeoutCost = mutantList.stream()
+                .mapToInt(x -> x.getStatus().equals("TIMED_OUT") ? 3000 : 0)
+                .sum();
+
+        int totalTimeoutCase = mutantList.stream()
+                .mapToInt(x -> x.getStatus().equals("TIMED_OUT") ? 1 : 0)
+                .sum();
+
+        int totaleCase = mutantList.size();
+
         double averageKillerRank = mutantList.stream()
                 .filter(x -> x.getStatus().equals("KILLED"))
                 .map(x -> x.getNumberOfTestsRun() + 1)
                 .mapToInt(i -> i)
                 .average()
                 .orElse(0);
-        // the number of patches got timeover / all patches
-        double timeoverCasePercentage = mutantList.stream()
+
+        // the number of patches got timeout / all patches
+        double timeoutCasePercentage = mutantList.stream()
                 .mapToInt(x -> x.getStatus().equals("TIMED_OUT") ? 1 : 0)
                 .average()
                 .orElse(0);
-        // the timeover testing time / all testing time
-        double timeoverCostPercentage = mutantList.stream()
-                .mapToDouble(x -> x.getStatus().equals("TIMED_OUT") ? 3000.0 : 0.0).sum() / totalTestTime;
+
+        // the timeout testing time / all testing time
+        double timeoutCostPercentage = totalTimeoutCost * 1.0 / totalTestTimeWithTimeOut;
+
+        double timeoutCostOnPatchTime = totalTimeoutCost * 1.0 / totalPatchExecutionTimeWithTimeOut;
+
         System.out.println(String.join("\t",
                 identifier,
                 Double.toString(averageKillerRank),
-                Integer.toString(totalTestTime),
-                Double.toString(timeoverCostPercentage),
-                Double.toString(timeoverCasePercentage)));
+                Integer.toString(totalTestTimeWithTimeOut),
+                Double.toString(timeoutCostPercentage),
+                Double.toString(timeoutCasePercentage),
+                Double.toString(timeoutCostOnPatchTime),
+                "" + totalTimeoutCase + "/" + totaleCase));
     }
 }

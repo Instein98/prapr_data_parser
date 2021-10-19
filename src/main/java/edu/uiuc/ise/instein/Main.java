@@ -31,7 +31,7 @@ public class Main {
                     try{
                         saxParser.parse(xmlFile.getAbsolutePath(), handler);
                     } catch (Throwable t){
-                        System.out.println(id + " parse failed: " + t.getMessage());
+                        System.out.println(id + " parse failed:" + t.getMessage());
                         continue;
                     }
                     Mutants result = handler.getResult();
@@ -43,8 +43,9 @@ public class Main {
 
     public static void printResult(Mutants mutants, String identifier){
         List<Mutant> mutantList = mutants.getMutantList();
+        // testing time including the timeout cost
         int totalTestTime = mutantList.stream()
-                .map(Mutant::getTestExecutionTimeSum)
+                .map(x -> x.getStatus().equals("TIMED_OUT") ? x.getTestExecutionTimeSum() + 3000 : x.getTestExecutionTimeSum())
                 .mapToInt(i -> i)
                 .sum();
         double averageKillerRank = mutantList.stream()
@@ -53,14 +54,19 @@ public class Main {
                 .mapToInt(i -> i)
                 .average()
                 .orElse(0);
-        double timeoverPercentage = mutantList.stream()
+        // the number of patches got timeover / all patches
+        double timeoverCasePercentage = mutantList.stream()
                 .mapToInt(x -> x.getStatus().equals("TIMED_OUT") ? 1 : 0)
                 .average()
                 .orElse(0);
+        // the timeover testing time / all testing time
+        double timeoverCostPercentage = mutantList.stream()
+                .mapToDouble(x -> x.getStatus().equals("TIMED_OUT") ? 3000.0 : 0.0).sum() / totalTestTime;
         System.out.println(String.join("\t",
                 identifier,
                 Double.toString(averageKillerRank),
                 Integer.toString(totalTestTime),
-                Double.toString(timeoverPercentage)));
+                Double.toString(timeoverCostPercentage),
+                Double.toString(timeoverCasePercentage)));
     }
 }

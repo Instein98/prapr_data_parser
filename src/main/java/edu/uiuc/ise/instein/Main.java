@@ -16,11 +16,25 @@ import java.util.List;
  */
 public class Main {
     public static void main(String[] args) throws Exception {
+        if (args.length != 1){
+            System.err.println("need a argument as target directory!");
+        } else if (!new File(args[0]).exists()){
+            System.err.println("target directory does not exist!");
+        }
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
         XmlHandler handler = new XmlHandler();
 
-        File resultDir = new File("xml_result_1.2");
+        File resultDir = new File(args[0]);
+        System.out.println(String.join("\t",
+                "identifier",
+                "averageKillerRank",
+                "totalTestTimeWithTimeOut",
+                "timeoutCostPercentage",
+                "timeoutCasePercentage",
+                "timeoutCostOnPatchTime",
+                "totalTimeoutCase/totaleCase"
+        ));
         for (File subjectDir: resultDir.listFiles()){
             if (subjectDir.isDirectory()){
                 for (File xmlFile: subjectDir.listFiles()){
